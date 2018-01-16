@@ -2,3 +2,7 @@ AUTH0_URL: auth-dev.mozilla.auth0.com
 AUDIENCE: https://person-api.sso.allizom.org
 CIS_DYNAMODB_TABLE: CISStaging-VaultandStreams-IdentityVaultUsers-O35P6M8U9LNW
 CIS_DYNAMODB_ARN: arn:aws:dynamodb:*:*:table/CISStaging-VaultandStreams-IdentityVaultUsers-O35P6M8U9LNW
+DOMAIN_NAME: person-api.sso.allizom.org
+BASE_PATH: /
+CERTIFICATE_NAME: person-api.sso.allizom.org
+ZONE_ID: Z1TD6NP912K738
