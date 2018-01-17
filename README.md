@@ -15,14 +15,18 @@ docker run --rm -ti \
 -v ~/workspace/person-api/:/workspace \
 mozillaiam/docker-sls:latest \
 /bin/bash
+
+npm install serverless-domain-manager --save-dev
+npm install serverless-python-requirements --save-dev
 ```
 
 # Locations
 Highly subject to change.
 
-__Prod__ : https://uhbz4h3wa8.execute-api.us-west-2.amazonaws.com/prod/profile/
 
-__Dev__ : https://295w5a6tu1.execute-api.us-west-2.amazonaws.com/dev/profile/
+__Prod__ : https://person-api.sso.mozilla.com/v1/profile/
+__Dev__ : https://person-api.sso.allizom.org/v1/profile/
+
 
 __Scopes Supported:__
   - read:email
@@ -30,7 +34,10 @@ __Scopes Supported:__
 
 # Calling the Profile Endpoint
 
+ curl --request GET --url https://person-api.sso.allizom.org/v1/profile/ad%7CMozilla-LDAP-Dev%7Ckangtest --header 'authorization: Bearer YOURBEARERTOKENHERE'
+
 1. Get an access token from the OAuth authorizer (i.e. https://auth.mozilla.auth0.com/oauth/token) with the required scopes for your query. This token is valid 24h.
 2. Use the access token to retrieve data from the API as such: `curl --request GET --url https://295w5a6tu1.execute-api.us-west-2.amazonaws.com/dev/profile/ad%7CMozilla-LDAP-Dev%7Ckangtest --header 'authorization: Bearer YOURBEARERTOKENHERE'`
+
 
 > Make sure you urlencode the authzero_id (`user.user_id`).

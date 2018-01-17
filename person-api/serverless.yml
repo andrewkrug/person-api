@@ -1,13 +1,21 @@
 service: person-api
 plugins:
   - serverless-python-requirements
+  - serverless-domain-manager
 custom:
-  stage: ${opt:stage, 'dev'}
   pythonRequirement:
     dockerizePip: false
+  customDomain:
+    domainName: ${file(config.${self:provider.stage}.yml):DOMAIN_NAME}
+    stage: ${self:provider.stage}
+    basePath: ''
+    certificateName: ${file(config.${self:provider.stage}.yml):CERTIFICATE_NAME}
+    createRoute53Record: true
+    hostedZoneId: ${file(config.${self:provider.stage}.yml):ZONE_ID}
 provider:
   name: aws
   runtime: python3.6
+  stage: ${opt:stage}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -24,14 +32,14 @@ functions:
       CIS_DYNAMODB_TABLE: ${file(config.${self:provider.stage}.yml):CIS_DYNAMODB_TABLE}
   # Bulk of profile retrieval operations.  Will be protected by auth.
   profilePrivate:
-    handler: profile.handler
+    handler: profile1.handler
     environment:
       AUTH0_URL: ${file(config.${self:provider.stage}.yml):AUTH0_URL}
       AUDIENCE: ${file(config.${self:provider.stage}.yml):AUDIENCE}
       CIS_DYNAMODB_TABLE: ${file(config.${self:provider.stage}.yml):CIS_DYNAMODB_TABLE}
     events:
       - http:
-          path: profile/{authzero_id}
+          path: v1/profile/{authzero_id}
           method: get
           integration: lambda
           authorizer: auth
