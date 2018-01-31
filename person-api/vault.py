@@ -24,6 +24,7 @@ class DataClassification(object):
             attrs.append('displayName')
             attrs.append('firstName')
             attrs.append('groups')
+            attrs.append('emails')
             attrs.append('lastModified')
             attrs.append('lastName')
             attrs.append('nicknames')
