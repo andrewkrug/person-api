@@ -2,6 +2,8 @@ AUTH0_URL: auth.mozilla.auth0.com
 AUDIENCE: https://person-api.sso.mozilla.com
 CIS_DYNAMODB_TABLE: cis-stream-prod-and-idv-IdentityVaultUsers-LMGGZ2XE8K6F
 CIS_DYNAMODB_ARN: arn:aws:dynamodb:*:*:table/cis-stream-prod-and-idv-IdentityVaultUsers-LMGGZ2XE8K6F
+CIS_PUBLIC_DATA_ARN: arn:aws:dynamodb:*:*:table/cis-public-data
+CIS_PUBLIC_DATA_TABLE: cis-public-data
 DOMAIN_NAME: person-api.sso.mozilla.com
 BASE_PATH: /
 CERTIFICATE_NAME: person-api.sso.mozilla.com

@@ -58,6 +58,38 @@ class IdentityVault(object):
         self._get_dynamodb_resource()
         self._get_dynamo_table()
 
+    @property
+    def all(self):
+        if self.table is None:
+            self.authenticate()
+
+        response = self.table.scan(
+                AttributesToGet=[
+                    'user_id',
+                    'active',
+                    'emails',
+                    'primaryEmail',
+                    'groups'
+                ]
+            )
+
+        users = response.get('Items')
+
+        while 'LastEvaluatedKey' in response:
+            response = self.table.scan(
+                AttributesToGet=[
+                    'user_id',
+                    'active',
+                    'emails',
+                    'primaryEmail',
+                    'groups'
+                ],
+                ExclusiveStartKey=response['LastEvaluatedKey']
+            )
+            users.extend(response['Items'])
+
+        return users
+
     def find(self, user_id):
         """Search for a user record by ID and return."""
         user_key = {'user_id': user_id}

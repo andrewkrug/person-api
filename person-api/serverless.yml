@@ -23,7 +23,20 @@ provider:
         - dynamodb:Scan
         - dynamodb:GetItem
       Resource: ${file(config.${self:provider.stage}.yml):CIS_DYNAMODB_ARN}
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+      Resource: ${file(config.${self:provider.stage}.yml):CIS_PUBLIC_DATA_ARN}
 functions:
+  public_data_job:
+    handler: jobs.populate_public_table
+    events:
+      - schedule:
+          name: populate_cis_public_data
+          description: 'Populates the CIS public data table for email search. 10-minute-interval'
+          rate: rate(10 minutes)
   auth:
     handler: auth.handler
     environment:
@@ -56,3 +69,24 @@ functions:
             parameters:
                paths:
                  authzero_id: true
+  # Public profile endpoint for querying connection data
+  profilePublicConnectionMethod:
+    handler: connection1.handler
+    environment:
+      CIS_DYNAMODB_TABLE: ${file(config.${self:provider.stage}.yml):CIS_DYNAMODB_TABLE}
+      CIS_PUBLIC_DATA_TABLE: ${file(config.${self:provider.stage}.yml):CIS_PUBLIC_DATA_TABLE}
+    events:
+      - http:
+          path: v1/connection/{email}
+          method: get
+          integration: lambda
+          cors:
+            origins:
+              - '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+          request:
+            parameters:
+               paths:
+                 email: true
