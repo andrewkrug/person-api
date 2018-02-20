@@ -29,6 +29,10 @@ provider:
         - dynamodb:Scan
         - dynamodb:GetItem
       Resource: ${file(config.${self:provider.stage}.yml):CIS_PUBLIC_DATA_ARN}
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: arn:aws:s3:::${file(config.${self:provider.stage}.yml):TEMPORARY_LDAP_DIFF_BUCKET}
 functions:
   public_data_job:
     handler: jobs.populate_public_table

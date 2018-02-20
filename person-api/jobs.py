@@ -4,6 +4,7 @@
 # XXX TBD develop process for backup and restore of current vault.
 
 import boto3
+import ldap2s3
 import logging
 import public
 import vault
@@ -44,6 +45,9 @@ def _is_more_secure(public_user_data, pdt):
     else:
         return True
 
+def temporary_ldap_data_import(self, email):
+
+
 def populate_public_table(event=None, context={}):
     idv = vault.IdentityVault()
     pdt = public.PublicData()
@@ -58,8 +62,20 @@ def populate_public_table(event=None, context={}):
             public_user_data = _generate_public_struct(user)
             logger.info('Storing the data in vault for: {}'.format(public_user_data))
             if _is_more_secure(public_user_data, pdt):
-                print('more secure')
                 res = pdt.create_or_update(public_user_data)
                 logger.info('Result of storage is: {}'.format(res))
             else:
-                print('no op')
+                pass
+
+    # XXX TBD Trust LDAP json file inherently until LDAP publisher exists.
+
+    ldap_people = ldap2s3.People.all
+
+    for k, v in ldap_people:
+        public_user_data = {
+            'user_email': k,
+            'connection_method': 'ad'
+        }
+
+        res = pdt.create_or_update(public_user_data)
+        logger.info('Result of storage is: {}'.format(res))
