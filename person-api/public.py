@@ -28,6 +28,8 @@ class PublicData(object):
             Item=public_user_data
         )
 
+        return response
+
     def find(self, email):
         """Search for a user record by ID and return."""
         user_email = {'user_email': email}

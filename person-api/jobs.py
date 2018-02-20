@@ -7,10 +7,15 @@ import boto3
 import ldapfroms3
 import logging
 import public
+import utils
 import vault
 
 logger = logging.getLogger(__name__)
 
+sl = utils.StructuredLogger(
+    name=__name__,
+    level=logging.INFO
+)
 
 def _get_connection_method(user):
     if user.get('primaryEmail').split('@')[1] == 'mozilla.com':
@@ -66,7 +71,7 @@ def populate_public_table(event=None, context={}):
                 pass
 
     # XXX TBD Trust LDAP json file inherently until LDAP publisher exists.
-
+    logger.info('Pulling in temporary data from LDAP.')
     ldap_people = ldapfroms3.People().all
 
     for email in ldap_people:
@@ -74,6 +79,6 @@ def populate_public_table(event=None, context={}):
             'user_email': email,
             'connection_method': 'ad'
         }
-
         res = pdt.create_or_update(public_user_data)
+        count = count + 1
         logger.info('Result of storage is: {}'.format(res))
