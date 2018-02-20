@@ -25,7 +25,7 @@ class People(object):
 
     @property
     def all(self):
-        return self._get_ldap_json
+        return self._get_ldap_json()
 
     def _get_ldap_json(self):
         if self.s3 is None:
