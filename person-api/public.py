@@ -28,8 +28,12 @@ class PublicData(object):
             Item=public_user_data
         )
 
+        return response
+
     def find(self, email):
         """Search for a user record by ID and return."""
+        email = email.lower()
+
         user_email = {'user_email': email}
         if self.table is None:
             self.authenticate()
