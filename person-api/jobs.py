@@ -76,9 +76,8 @@ def populate_public_table(event=None, context={}):
 
     for email in ldap_people:
         public_user_data = {
-            'user_email': email,
+            'user_email': email.lower(),
             'connection_method': 'ad'
         }
         res = pdt.create_or_update(public_user_data)
-        count = count + 1
         logger.info('Result of storage is: {}'.format(res))
