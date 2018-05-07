@@ -2,6 +2,19 @@
 
 This API return user profile data from the [Change Integration Service](https://github.com/mozilla-iam/cis) dynamodb table.
 
+## Setting up a local environment with serverlesss
+
+1. `npm install -g serverless`
+2. `cd webhook_publisher/`
+3. `sls plugin install -n serverless-wsgi`
+4. `sls plugin install -n serverless-python-requirements`
+5. `sls plugin install -n serverless-domain-manager`
+6. `setup a virtualenv`
+7. `pip3 install -r requirements.txt`
+8. `npm install -g dynalite`
+9. `pip3 install nose nose-watch`
+10. `nosetests --with-watch tests`
+
 ## For PersonAPI Users
 ### API Locations
 

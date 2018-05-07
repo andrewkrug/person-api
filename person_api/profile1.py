@@ -4,7 +4,7 @@ import json
 import logging
 import urllib
 
-import vault
+from person_api import vault
 
 
 logger = logging.getLogger(__name__)

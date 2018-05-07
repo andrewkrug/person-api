@@ -1,0 +1,7 @@
+env3/
+person-api_old/
+node_modules/
+person-api/node_modules/
+env/
+env3/
+tests/__pycache__/

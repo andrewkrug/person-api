@@ -1,5 +1,0 @@
-python-jose
-python-dotenv
-six
-everett
-credstash

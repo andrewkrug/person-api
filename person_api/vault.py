@@ -1,8 +1,8 @@
 """Search operations in the identity vault."""
 import boto3
-import config
 import logging
 
+from person_api import config
 
 logger = logging.getLogger(__name__)
 CONFIG = config.get_config()
