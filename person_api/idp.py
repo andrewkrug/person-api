@@ -16,6 +16,7 @@ AUTH0_DOMAIN = CONFIG('auth0_domain', default='auth-dev.mozilla.auth0.com')
 API_IDENTIFIER = CONFIG('api_identifier', default='https://person-api.sso.allizom.org')
 ALGORITHMS = CONFIG('algorithms', default='RS256')
 
+
 # Format error response and append status code
 def get_token_auth_header():
     """Obtains the Access Token from the Authorization Header
@@ -90,7 +91,7 @@ def requires_auth(f):
                                 "description":
                                     "incorrect claims,"
                                     "please check the audience and issuer"}, 401)
-            except Exception:
+            except Exception as e:
                 logger.error(e)
                 raise AuthError({"code": "invalid_header",
                                 "description":

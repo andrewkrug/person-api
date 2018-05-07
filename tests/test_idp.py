@@ -1,10 +1,7 @@
 import logging
-import os
 import unittest
 
 from jose import jws
-from jose.constants import ALGORITHMS
-from jose.exceptions import JWSError
 
 from tests.fake_auth0 import FakeBearer
 from tests.fake_auth0 import json_form_of_pk
@@ -12,10 +9,9 @@ from person_api import api
 from unittest.mock import patch
 
 
-
 logging.basicConfig(
-   level=logging.DEBUG,
-   format='%(asctime)s:%(levelname)s:%(name)s:%(message)s'
+    level=logging.DEBUG,
+    format='%(asctime)s:%(levelname)s:%(name)s:%(message)s'
 )
 
 
@@ -24,12 +20,14 @@ class IdpTest(unittest.TestCase):
         f = FakeBearer()
         token = f.generate_bearer_without_scope()
         is_valid_sig = jws.verify(token, f.fake_signing_key_public, ['RS256'])
+        assert is_valid_sig is not None
         assert token is not None
 
     def test_generate_fake_bearer_with_scope(self):
         f = FakeBearer()
         token = f.generate_bearer_with_scope('read:profile')
         is_valid_sig = jws.verify(token, f.fake_signing_key_public, ['RS256'])
+        assert is_valid_sig is not None
         assert token is not None
 
     @patch('person_api.idp.get_jwks')

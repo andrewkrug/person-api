@@ -1,13 +1,7 @@
-import base64
-import json
-import os
-
 from datetime import datetime
 from datetime import timedelta
 
 from jose import jws
-from jose import jwt
-from jose.exceptions import JWTError
 
 
 rsa_private_key = """-----BEGIN RSA PRIVATE KEY-----
@@ -84,7 +78,16 @@ json_form_of_pk = {
             u'e': u'AQAB',
             u'kid': u'6758b0b8eb341e90454860432d6a1648bf4de03b',
             u'kty': u'RSA',
-            u'n': u'ALUin0niNH7pESF9_AB5SgdWD6V_D1GDdiXb3zPl4zZi31NTO-DdFZncyF_ebJ3kBjvZAtsTCBPgCJbedmH_yoAWYIAJUvWNFcfA7Ei9h7zo4LgHV4q972C7wMsh4p_5lIrCTqnHBSgoRyo55NLl8v9_Pta9e_3GE6e-m6yqVNSOJDNtDP_3W7ywVo388sPXobn6--GlcK_tMSX7AVa9qGkBcMP1xxs-vUO8hyug28WDuMOKtrCH3AuKU_F0zx6OCWdjO99xGvGux8bWUuet_5oYUWS1OWsp0KcGlb9lPvgi-hLxrfE5TWTpHkb_MM_kbfAe9I86EaVSt-q0fqRypV4TBk-tfb_Ni53k3bKgNuVoti3f3NJ4rrpduAOvmmo9rvUlm8QPS5lbRZ7bzW0Wh1xNUi6Sz6CKfLqaRhdNjc9r95XfIAp001n6vwUPNEMvHtHKEUQARAma4yDMxxIOjJaEQ8uJ2tKUUL-tVaIKkSg1Nq9_1XsxT0A293ImLGY1ga9x6TTpFI067y5hcjhPUOUf6kBpnOgWLX5Oa5-4iH15ZCQGR14QcvhJQbogTPmEpBTO3R_drEiKGdOVeDD9PV3Kace5HcLCcu9krrLfR53fQe1d-WJ1Relu_dZVR53p4QiTs4kZpB-MSy2z5Gkk9irNyBx-7VZbTOjbEZN4zXVT',
+            u'n': str(
+                'ALUin0niNH7pESF9_AB5SgdWD6V_D1GDdiXb3zPl4zZi31NTO-DdFZncyF_ebJ3kBjvZAtsTCBPgCJbedmH_'
+                'yoAWYIAJUvWNFcfA7Ei9h7zo4LgHV4q972C7wMsh4p_5lIrCTqnHBSgoRyo55NLl8v9_Pta9e_3GE6e-m6yqVNSOJDNtDP_'
+                '3W7ywVo388sPXobn6--GlcK_tMSX7AVa9qGkBcMP1xxs-vUO8hyug28WDuMOKtrCH3AuKU_'
+                'F0zx6OCWdjO99xGvGux8bWUuet_5oYUWS1OWsp0KcGlb9lPvgi-hLxrfE5TWTpHkb_MM_kbfAe9I86EaVSt-q0fqRypV4TBk-tfb_'
+                'Ni53k3bKgNuVoti3f3NJ4rrpduAOvmmo9rvUlm8QPS5lbRZ7bzW0Wh1xNUi6Sz6CKfLqaRhdNjc9r95XfIAp001n6vwUPNEMvHtHKE'
+                'UQARAma4yDMxxIOjJaEQ8uJ2tKUUL-tVaIKkSg1Nq9_1XsxT0A293ImLGY1ga9x6TTpFI067y5hcjhPUOUf6kBpnOgWLX5Oa5-4iH1'
+                '5ZCQGR14QcvhJQbogTPmEpBTO3R_drEiKGdOVeDD9PV3Kace5HcLCcu9krrLfR53fQe1d-WJ1Relu_dZVR53p4QiTs4kZpB-MSy2z5'
+                'Gkk9irNyBx-7VZbTOjbEZN4zXVT'
+            ),
             u'use': u'sig'
         }
     ]
@@ -99,23 +102,23 @@ class FakeBearer(object):
 
     def generate_bearer_without_scope(self):
         claims = {
-          'iss': 'https://auth-dev.mozilla.auth0.com/',
-          'sub': 'mc1l0G4sJI2eQfdWxqgVNcRAD9EAgHib@clients',
-          'aud': 'https://person-api.sso.allizom.org',
-          'iat': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
-          'exp': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
-          'gty': 'client-credentials'
+            'iss': 'https://auth-dev.mozilla.auth0.com/',
+            'sub': 'mc1l0G4sJI2eQfdWxqgVNcRAD9EAgHib@clients',
+            'aud': 'https://person-api.sso.allizom.org',
+            'iat': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
+            'exp': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
+            'gty': 'client-credentials'
         }
         return jws.sign(claims, self.fake_signing_key_private, headers=self.additional_headers, algorithm='RS256')
 
     def generate_bearer_with_scope(self, scope):
         claims = {
-          'iss': 'https://auth-dev.mozilla.auth0.com/',
-          'sub': 'mc1l0G4sJI2eQfdWxqgVNcRAD9EAgHib@clients',
-          'aud': 'https://person-api.sso.allizom.org',
-          'iat': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
-          'exp': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
-          'scope': scope,
-          'gty': 'client-credentials'
+            'iss': 'https://auth-dev.mozilla.auth0.com/',
+            'sub': 'mc1l0G4sJI2eQfdWxqgVNcRAD9EAgHib@clients',
+            'aud': 'https://person-api.sso.allizom.org',
+            'iat': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
+            'exp': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
+            'scope': scope,
+            'gty': 'client-credentials'
         }
         return jws.sign(claims, self.fake_signing_key_private, headers=self.additional_headers, algorithm='RS256')

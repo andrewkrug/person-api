@@ -1,4 +1,3 @@
-import json
 import logging
 from flask import Flask
 from flask import jsonify
@@ -28,14 +27,14 @@ def version():
     return jsonify(message=response)
 
 
-@app.route("/v1/profile", methods=['POST'])
+@app.route("/v1/profile", methods=['GET', 'POST'])
 @cross_origin(headers=['Content-Type', 'Authorization'])
 @cross_origin(headers=["Access-Control-Allow-Origin", "*"])
 def profile():
     if requires_scope("read:email"):
         pass
     elif requires_scope("read:profile"):
-        profile_data = json.loads(request.data)
+        pass
     else:
         raise AuthError({
             "code": "Unauthorized",
@@ -60,6 +59,7 @@ def private():
     return jsonify(message=response)
 
 
+# This needs authentication and scope
 @app.route("/api/private-scoped", methods=['GET', 'POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 @cross_origin(headers=["Access-Control-Allow-Origin", "*"])

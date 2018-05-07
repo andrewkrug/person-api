@@ -89,10 +89,7 @@ class FakeUser(object):
                 continue
             group_name = self._random_group_name()
             if group_name not in groups:
-                groups.append("{}".format(
-                        group_name
-                    )
-                )
+                groups.append("{}".format(group_name))
         return groups
 
     def _random_group_name(self):

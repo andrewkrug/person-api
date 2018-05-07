@@ -7,6 +7,7 @@ from person_api import config
 logger = logging.getLogger(__name__)
 CONFIG = config.get_config()
 
+
 class DataClassification(object):
     def __init__(self, scope):
         self.scope = scope

@@ -29,6 +29,7 @@ Event information that we care about parsing.
 }
 """
 
+
 class Query(object):
     def __init__(self, event):
         self.event = event
@@ -61,8 +62,6 @@ def handler(event, context):
 
     # Extract the bits we care about.
     user_id = q.user_id
-
-    print(user_id)
 
     scope = q.scope
 

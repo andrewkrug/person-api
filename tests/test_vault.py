@@ -4,9 +4,13 @@ import logging
 import os
 import unittest
 
+from person_api import vault
+from tests.fake_cis_v1 import FakeVault
+
+
 logging.basicConfig(
-   level=logging.DEBUG,
-   format='%(asctime)s:%(levelname)s:%(name)s:%(message)s'
+    level=logging.DEBUG,
+    format='%(asctime)s:%(levelname)s:%(name)s:%(message)s'
 )
 
 logging.getLogger('boto').setLevel(logging.CRITICAL)
@@ -14,9 +18,6 @@ logging.getLogger('boto3').setLevel(logging.CRITICAL)
 logging.getLogger('botocore').setLevel(logging.CRITICAL)
 
 logger = logging.getLogger(__name__)
-from tests.fake_cis_v1 import FakeVault
-from person_api import config
-from person_api import vault
 
 
 class VaultTest(unittest.TestCase):
@@ -44,7 +45,6 @@ class VaultTest(unittest.TestCase):
         cis_table.table = fake_table
         os.environ["CIS_DYNAMODB_PERSON_TABLE"] = self.table_name
 
-
     def test_vault_populated(self):
         table_name = self.table_name
         fake_dynamo = boto3.resource('dynamodb', endpoint_url='http://localhost:4567')
@@ -57,6 +57,5 @@ class VaultTest(unittest.TestCase):
     def tearDown(self):
         v = FakeVault(self.table_name)
         v.delete()
-
         while v.is_ready is True:
             pass
