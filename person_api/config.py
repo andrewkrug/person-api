@@ -18,8 +18,9 @@ def connect_ssm():
     return boto3.client('ssm', region_name='us-west-2')
 
 
-def get_encrypted_parameter(parameter_name):
-    client = connect_ssm()
+def get_encrypted_parameter(parameter_name, client=None):
+    if client is None:
+        client = connect_ssm()
 
     result = client.get_parameter(
         Name=parameter_name,

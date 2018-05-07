@@ -100,7 +100,7 @@ class FakeBearer(object):
         self.fake_signing_key_public = rsa_public_key
         self.additional_headers = {'kid': u'6758b0b8eb341e90454860432d6a1648bf4de03b'}
 
-    def generate_bearer_without_scope(self):
+    def generate_bearer_without_scope(self, bad_claims=None):
         claims = {
             'iss': 'https://auth-dev.mozilla.auth0.com/',
             'sub': 'mc1l0G4sJI2eQfdWxqgVNcRAD9EAgHib@clients',
@@ -111,7 +111,7 @@ class FakeBearer(object):
         }
         return jws.sign(claims, self.fake_signing_key_private, headers=self.additional_headers, algorithm='RS256')
 
-    def generate_bearer_with_scope(self, scope):
+    def generate_bearer_with_scope(self, scope, bad_claims=None):
         claims = {
             'iss': 'https://auth-dev.mozilla.auth0.com/',
             'sub': 'mc1l0G4sJI2eQfdWxqgVNcRAD9EAgHib@clients',
@@ -121,4 +121,8 @@ class FakeBearer(object):
             'scope': scope,
             'gty': 'client-credentials'
         }
+        
+        if bad_claims is not None:
+            claims = bad_claims
+
         return jws.sign(claims, self.fake_signing_key_private, headers=self.additional_headers, algorithm='RS256')

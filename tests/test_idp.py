@@ -1,6 +1,8 @@
 import logging
 import unittest
 
+from datetime import datetime
+from datetime import timedelta
 from jose import jws
 
 from tests.fake_auth0 import FakeBearer
@@ -63,3 +65,82 @@ class IdpTest(unittest.TestCase):
         )
         assert result.status_code == 200
         assert result.data == b'{\n  "message": "Hello from a scoped private endpoint!"\n}\n'
+
+    @patch('person_api.idp.get_jwks')
+    def test_access_denied_for_bad_aud(self, fake_jwks):
+        f = FakeBearer()
+        fake_jwks.return_value = json_form_of_pk
+        bad_claims = {
+            'iss': 'https://auth-dev.mozilla.auth0.com/',
+            'sub': 'mc1l0G4sJI2eQfdWxqgVNcRAD9EAgHib@clients',
+            'aud': 'https://hacksforpancakes',
+            'iat': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
+            'exp': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
+            'scope': 'read:profile',
+            'gty': 'client-credentials'
+        }
+
+        token = f.generate_bearer_with_scope('read:profile', bad_claims)
+        api.app.testing = True
+        self.app = api.app.test_client()
+        result = self.app.post(
+            '/api/private-scoped',
+            headers={
+                'Authorization': 'Bearer ' + token
+            },
+            follow_redirects=True
+        )
+        assert result.status_code == 401
+
+    @patch('person_api.idp.get_jwks')
+    def test_access_denied_for_expired_token(self, fake_jwks):
+        f = FakeBearer()
+        fake_jwks.return_value = json_form_of_pk
+        bad_claims = {
+            'iss': 'https://auth-dev.mozilla.auth0.com/',
+            'sub': 'mc1l0G4sJI2eQfdWxqgVNcRAD9EAgHib@clients',
+            'aud': 'https://hacksforpancakes',
+            'iat': (datetime.utcnow() + timedelta(seconds=3100)).strftime('%s'),
+            'exp': (datetime.utcnow() + timedelta(seconds=3100)).strftime('%s'),
+            'scope': 'read:profile',
+            'gty': 'client-credentials'
+        }
+
+        token = f.generate_bearer_with_scope('read:profile', bad_claims)
+        api.app.testing = True
+        self.app = api.app.test_client()
+        result = self.app.post(
+            '/api/private-scoped',
+            headers={
+                'Authorization': 'Bearer ' + token
+            },
+            follow_redirects=True
+        )
+        assert result.status_code == 401
+
+
+    @patch('person_api.idp.get_jwks')
+    def test_access_denied_for_incorrect_scope(self, fake_jwks):
+        f = FakeBearer()
+        fake_jwks.return_value = json_form_of_pk
+        bad_claims = {
+            'iss': 'https://auth-dev.mozilla.auth0.com/',
+            'sub': 'mc1l0G4sJI2eQfdWxqgVNcRAD9EAgHib@clients',
+            'aud': 'https://person-api.sso.allizom.org',
+            'iat': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
+            'exp': (datetime.utcnow() - timedelta(seconds=3100)).strftime('%s'),
+            'scope': 'read:allthething',
+            'gty': 'client-credentials'
+        }
+
+        token = f.generate_bearer_with_scope('read:profile', bad_claims)
+        api.app.testing = True
+        self.app = api.app.test_client()
+        result = self.app.post(
+            '/api/private-scoped',
+            headers={
+                'Authorization': 'Bearer ' + token
+            },
+            follow_redirects=True
+        )
+        assert result.status_code == 403

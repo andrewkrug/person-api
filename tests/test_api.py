@@ -5,7 +5,7 @@ import os
 import unittest
 
 from tests.fake_cis_v1 import FakeVault
-from person_api import vault
+from person_api.vault1 import IdentityVault
 from person_api import api
 
 logging.basicConfig(
@@ -42,7 +42,9 @@ class ApiTest(unittest.TestCase):
         table_name = self.table_name
         fake_dynamo = boto3.resource('dynamodb', endpoint_url='http://localhost:4567')
         fake_table = fake_dynamo.Table(table_name)
-        cis_table = vault.IdentityVault(table_name)
+
+        cis_table = IdentityVault(table_name)
+
         cis_table.table = fake_table
         os.environ["CIS_DYNAMODB_PERSON_TABLE"] = self.table_name
         api.app.testing = True

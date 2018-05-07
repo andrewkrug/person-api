@@ -70,3 +70,8 @@ def private_scoped():
     if requires_scope("read:profile"):
         response = "Hello from a scoped private endpoint!"
         return jsonify(message=response)
+    else:
+        raise AuthError({
+            "code": "Unauthorized",
+            "description": "Scope not matched.  Access Denied."
+        }, 403)
