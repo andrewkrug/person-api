@@ -9,23 +9,23 @@ provider:
         - dynamodb:Query
         - dynamodb:Scan
         - dynamodb:GetItem
-      Resource: ${file(config.${self:provider.stage}.yml):CIS_DYNAMODB_ARN}
+      Resource: ${file(serverless-config/config.${self:provider.stage}.yml):CIS_DYNAMODB_ARN}
     - Effect: Allow
       Action:
         - dynamodb:Query
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
-      Resource: ${file(config.${self:provider.stage}.yml):CIS_PUBLIC_DATA_ARN}
+      Resource: ${file(serverless-config/config.${self:provider.stage}.yml):CIS_PUBLIC_DATA_ARN}
     - Effect: Allow
       Action:
         - s3:GetObject
         - s3:HeadObject
-      Resource: arn:aws:s3:::${file(config.${self:provider.stage}.yml):TEMPORARY_LDAP_DIFF_BUCKET}**
+      Resource: arn:aws:s3:::${file(serverless-config/config.${self:provider.stage}.yml):TEMPORARY_LDAP_DIFF_BUCKET}**
 functions:
   api:
     environment:
-      CIS_DYNAMODB_TABLE: ${file(config.${self:provider.stage}.yml):CIS_DYNAMODB_TABLE}
+      CIS_DYNAMODB_TABLE: ${file(serverless-config/config.${self:provider.stage}.yml):CIS_DYNAMODB_TABLE}
     handler: wsgi.handler
     events:
       - http: ANY /
@@ -33,16 +33,20 @@ functions:
 custom:
   pythonRequirements:
     dockerizePip: true
+  stage: ${self:provider.stage}
   wsgi:
     app: api.app
   customDomain:
-    domainName: ${file(config.${self:provider.stage}.yml):DOMAIN_NAME}
+    domainName: ${file(serverless-config/config.${self:provider.stage}.yml):DOMAIN_NAME}
     stage: ${self:provider.stage}
     basePath: ''
-    certificateName: ${file(config.${self:provider.stage}.yml):CERTIFICATE_NAME}
+    certificateName: ${file(serverless-config/config.${self:provider.stage}.yml):CERTIFICATE_NAME}
     createRoute53Record: true
-    hostedZoneId: ${file(config.${self:provider.stage}.yml):ZONE_ID}
+    hostedZoneId: ${file(serverless-config/config.${self:provider.stage}.yml):ZONE_ID}
   plugins:
     - serverless-python-requirements
     - serverless-wsgi
     - serverless-domain-manager
+
+plugins:
+  - serverless-wsgi

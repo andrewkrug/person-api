@@ -7,7 +7,7 @@ from jose import jws
 
 from tests.fake_auth0 import FakeBearer
 from tests.fake_auth0 import json_form_of_pk
-from person_api import api
+import api
 from unittest.mock import patch
 
 

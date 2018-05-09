@@ -6,7 +6,7 @@ import unittest
 
 from tests.fake_cis_v1 import FakeVault
 from person_api.vault1 import IdentityVault
-from person_api import api
+import api
 
 logging.basicConfig(
     level=logging.DEBUG,
