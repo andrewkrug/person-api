@@ -2,17 +2,30 @@ import logging
 from flask import Flask
 from flask import jsonify
 from flask_cors import cross_origin
-from flask.views import MethodView
 from flask_swagger import swagger
+from flask.views import MethodView
 
 from person_api.idp import requires_auth
 from person_api.idp import requires_scope
 from person_api.exceptions import AuthError
+from person_api.models.v1.connection import ConnectionAPI
+from person_api.models.v1.profile import ProfileAPI
 from person_api import __version__
 
 app = Flask(__name__)
 
+
 logger = logging.getLogger(__name__)
+
+
+connection_view = ConnectionAPI.as_view('connection')
+profile_view = ProfileAPI.as_view('profile')
+app.add_url_rule('/v1/connection/', view_func=connection_view, methods=["GET"])
+app.add_url_rule('/v1/connection/<user_email>', view_func=connection_view, methods=["GET"])
+app.add_url_rule('/v1/connection/?', view_func=connection_view, methods=["GET"])
+app.add_url_rule('/v1/profile/<user_id>', view_func=profile_view, methods=["GET", "POST"])
+app.add_url_rule('/v1/profile/', view_func=profile_view, methods=["GET"])
+app.add_url_rule('/v1/profile/?', view_func=profile_view, methods=["GET"])
 
 
 @app.route("/spec")

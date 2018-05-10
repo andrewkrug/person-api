@@ -130,6 +130,103 @@ class FakeUser(object):
         return random.choice(prefixes)
 
 
+class FakeConnectionTable(object):
+    def __init__(self, table_name):
+        self.table_name = table_name
+        self.dynamodb_client = boto3.client(
+            'dynamodb',
+            endpoint_url='http://localhost:4567',
+            aws_access_key_id='anything',
+            aws_secret_access_key='anything',
+        )
+
+    def find_or_create(self):
+        if self.is_ready():
+            return True
+        else:
+            return self.create()
+
+    def create(self):
+        try:
+            response = self.dynamodb_client.create_table(
+                AttributeDefinitions=[
+                    {
+                        'AttributeName': 'user_email',
+                        'AttributeType': 'S'
+                    },
+                ],
+                TableName=self.table_name,
+                KeySchema=[
+                    {
+                        'AttributeName': 'user_email',
+                        'KeyType': 'HASH'
+                    },
+                ],
+                ProvisionedThroughput={
+                    'ReadCapacityUnits': 100,
+                    'WriteCapacityUnits': 100
+                }
+            )
+
+            return response
+        except self.dynamodb_client.exceptions.ResourceInUseException:
+            return
+
+    def delete(self):
+        if self.is_ready():
+            response = self.dynamodb_client.delete_table(
+                TableName=self.table_name
+            )
+
+            return response
+        else:
+            return
+
+    def is_ready(self):
+        try:
+            logger.info('Attempting to locate the table.')
+            response = self.dynamodb_client.describe_table(
+                TableName=self.table_name
+            )
+
+            if response['Table'].get('TableStatus') == 'ACTIVE':
+                logger.info('Table is ready.')
+                return True
+        except self.dynamodb_client.exceptions.ResourceNotFoundException:
+            logger.warning('Could not find table yet.')
+            pass
+        return False
+
+    def fake_table(self):
+        dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:4567/')
+        table = dynamodb.Table(self.table_name)
+        return table
+
+    def _add_record(self, record):
+        table = self.fake_table()
+        response = table.put_item(
+            Item=record
+        )
+
+        return response
+
+    def populate(self):
+        number_of_fake_users = 4000
+        logger.info('Populating fake identity vault with: {} users.'.format(number_of_fake_users))
+        fake_user = FakeUser()
+        for x in range(number_of_fake_users):
+            profile = fake_user.profile
+            user_id = profile.get('user_id')
+            connection = user_id.split('|')[0]
+
+            record = {
+                'user_email': profile.get('primaryEmail'),
+                'connection_method': connection
+            }
+            self._add_record(record)
+            logger.info('Fake connection added: {}'.format(profile.get('primaryEmail')))
+
+
 class FakeVault(object):
     def __init__(self, table_name):
         self.table_name = table_name
@@ -211,7 +308,7 @@ class FakeVault(object):
         return response
 
     def populate(self):
-        number_of_fake_users = 10
+        number_of_fake_users = 4000
         logger.info('Populating fake identity vault with: {} users.'.format(number_of_fake_users))
         fake_user = FakeUser()
         for x in range(number_of_fake_users):
