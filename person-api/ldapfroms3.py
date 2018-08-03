@@ -39,6 +39,6 @@ class People(object):
 
         ldap_json = json.loads(
             lzma.open('/tmp/{}'.format(object_key)).read()
-        )
+        ).items()
 
         return ldap_json

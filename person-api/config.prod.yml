@@ -10,4 +10,4 @@ CERTIFICATE_NAME: person-api.sso.mozilla.com
 ZONE_ID: Z3QSLLEQC9DYUS
 TEMPORARY_LDAP_DIFF_BUCKET: cis-ldap2s3-publisher-data
 TEMPORARY_LDAP_S3_REGION: us-east-1
-TEMPORARY_LDAP_JSON_FILE: ldap.json.xz
+TEMPORARY_LDAP_JSON_FILE: ldap-full-profile.json.xz

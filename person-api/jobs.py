@@ -74,10 +74,15 @@ def populate_public_table(event=None, context={}):
     logger.info('Pulling in temporary data from LDAP.')
     ldap_people = ldapfroms3.People().all
 
-    for email in ldap_people:
-        public_user_data = {
-            'user_email': email.lower(),
-            'connection_method': 'ad'
-        }
-        res = pdt.create_or_update(public_user_data)
-        logger.info('Result of storage is: {}'.format(res))
+    for k, v in ldap_people:
+        email = v.get('primaryEmail')
+
+        if email is not None:
+            public_user_data = {
+                'user_email': email.lower(),
+                'connection_method': 'ad'
+            }
+            res = pdt.create_or_update(public_user_data)
+            logger.info('Result of storage is: {}'.format(res))
+        else:
+            pass
