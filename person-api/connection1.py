@@ -19,7 +19,7 @@ class PublicData(object):
 
     def find(self, email):
         """Search for a user record by email and return."""
-        email = {'user_email': email}
+        email = {'user_email': email.lower()}
 
         self.authenticate()
         response = self.table.get_item(
